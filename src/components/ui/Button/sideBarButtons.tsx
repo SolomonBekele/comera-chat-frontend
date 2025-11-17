@@ -1,0 +1,56 @@
+import { ChatIcon, CollapseIcon, ExpandIcon, LogoutIcon, SettingIcon } from "../icons/menuBarIcons";
+type CollapseButtonProps = {
+  collapsed: boolean;
+  setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+};
+type ButtonProps = {
+  collapsed?: boolean;
+  active?: boolean;
+  onClick?: () => void;
+};
+type CollapseProps = {
+  collapsed: boolean;
+};
+
+
+export const CollapseButton = ({ collapsed, setCollapsed }:CollapseButtonProps) => {
+  return (
+    <button
+      onClick={() => setCollapsed(!collapsed)}
+      className="inline-flex items-center justify-center size-9 rounded-md hover:bg-gray-100"
+    >
+      {collapsed ? <ExpandIcon /> : <CollapseIcon />}
+    </button>
+  );
+};
+
+export const ChatButton: React.FC<ButtonProps> = ({ collapsed, active, onClick }) => {
+  return (
+    <button onClick={onClick} className ={`flex items-center gap-3 h-10 px-4 w-full hover:bg-gray-100 rounded-md transition-all
+    ${active && "bg-slate-200"}
+    `}>
+      <ChatIcon />
+      {!collapsed && <span>Chats</span>}
+    </button>
+  );
+};
+
+export const SettingButton: React.FC<ButtonProps> = ({ collapsed, active, onClick }) => {
+  return (
+    <button onClick={onClick} className={`flex items-center gap-3 h-10 px-4 w-full hover:bg-gray-100 rounded-md transition-all
+    ${active && "bg-slate-200"}
+    `}>
+      <SettingIcon />
+      {!collapsed && <span>Settings</span>}
+    </button>
+  );
+};
+
+export const LogoutButton = ({ collapsed }:CollapseProps) => {
+  return (
+    <button className="flex items-center gap-3 h-10 px-4 w-full hover:bg-red-50 text-red-600 rounded-md transition-all">
+      <LogoutIcon />
+      {!collapsed && <span>Logout</span>}
+    </button>
+  );
+};
