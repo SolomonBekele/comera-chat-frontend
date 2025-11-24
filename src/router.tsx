@@ -1,20 +1,29 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import DashboardPage from "./pages/DashboardPage"; 
 import SigninPage from "./pages/SigninPage";
+import { useAuthContext } from "./context/AuthContext";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Navigate to="/signin" replace />,
-  },
-  {
-    path: "/dashboard",
-    element: <DashboardPage />,
-  },
-  {
-    path: "/signin",
-    element: <SigninPage />,
-  },
-]);
 
-export default router;
+
+export const useRouter = () => {
+  const { authUser } = useAuthContext();
+
+  return createBrowserRouter([
+    {
+      path: "/",
+      element: authUser ? <Navigate to="/dashboard" replace /> : <Navigate to="/signin" replace />,
+    },
+    {
+      path: "/dashboard",
+      element: authUser ? <DashboardPage /> : <Navigate to="/signin" replace />,
+    },
+    {
+      path: "/signin",
+      element: authUser ? <Navigate to="/dashboard" replace /> : <SigninPage />,
+    },
+    // {
+    //   path: "/signup",
+    //   element: authUser ? <Navigate to="/dashboard" replace /> : <SignupPage />,
+    // },
+  ]);
+};

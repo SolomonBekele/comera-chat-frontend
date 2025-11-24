@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import MenuBar from "../components/layout/MenuBar";
 import MessageContainer from "../components/layout/MessageContainer";
 import SideBar from "../components/layout/SideBar";
+import { useAuthContext } from "../context/AuthContext";
 
 const DashboardPage: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -19,4 +20,5 @@ const DashboardPage: React.FC = () => {
     </div>
   );
 };
+
 export default DashboardPage;

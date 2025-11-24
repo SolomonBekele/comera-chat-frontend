@@ -1,34 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { SearchBarInput } from "../ui/Input/UsersBarInput";
-
 import { Conversation } from "./Conversation";
-import { UsersData } from "../../utils/constants";
 import UserButtonShimmer from "./Shimmer";
-
-interface User {
-  id: number;
-  name: string;
-  avatar: string;
-  lastMessage: string;
-  timeAgo: string;
-  unreadCount: number;
-}
+import type { AppDispatch, RootState } from "../../store";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchConversations } from "../../store/Conversations/conversationThunk";
 
 const Conversations: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([]);
-
-  const fetchUsers = (): void => {
-    const res = UsersData;
-    setUsers(res);
-  };
+ const dispatch = useDispatch<AppDispatch>();
+  const { conversations, status, error } = useSelector((state: RootState) => state.conversations);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchUsers();
-    }, 1000);
-
-    // cleanup
-    return () => clearTimeout(timer);
+    
+    dispatch(fetchConversations());
   }, []);
 
   return (
@@ -36,20 +20,21 @@ const Conversations: React.FC = () => {
       {/* Header */}
       <div className="p-4">
         <h2 className="mb-4 hidden md:block">Messages</h2>
-
         <SearchBarInput />
       </div>
 
       {/* Scroll Area */}
       <div className="relative flex-1">
         <div className="focus-visible:ring-ring/50 size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-1">
-          <div className=" p-2">
-            {users.length === 0
-              ? Array.from({ length: 5 }).map((_, i) => (
-                  <UserButtonShimmer key={i} />
-                ))
-              : users.map((user) => <Conversation key={user.id} {...user} />)}
-
+          <div className="p-2">
+            {status === "loading"
+              ? Array.from({ length: 5 }).map((_, i) => <UserButtonShimmer key={i} />)
+              : status === "failed"
+              ? <p className="text-red-500">{error}</p>
+              : conversations.map((conversation) => {
+              console.log(conversation);
+                  return <Conversation key={conversation.id} {...conversation} />
+})}
           </div>
         </div>
       </div>

@@ -1,6 +1,20 @@
 import React from "react";
 import { CameraIcon } from "../ui/icons/sideBarIcons";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store";
+
+
 const AccountSetting: React.FC = () => {
+
+  const { user} = useSelector(
+    (state: RootState) => state.user
+  );
+  const localUser = JSON.parse(localStorage.getItem("user") || "{}");
+
+  const profilePic = user?.profilePic || localUser?.profilePic;
+  const fullName = user?.fullName || localUser?.fullName;
+  const email =  user?.email || localUser?.email;
+  
   return (
     <div className="mt-6 space-y-6 animate-fade">
       <h3 className="mb-4">Profile Information</h3>
@@ -11,7 +25,7 @@ const AccountSetting: React.FC = () => {
           <span className="relative flex size-10 shrink-0 overflow-hidden rounded-full w-20 h-20">
             <img
               alt="You"
-              src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop"
+              src={profilePic}
               className="aspect-square size-full object-cover"
             />
           </span>
@@ -40,7 +54,7 @@ const AccountSetting: React.FC = () => {
       <div className="space-y-2">
         <label className="text-sm font-medium">Display Name</label>
         <input
-          defaultValue="You"
+          defaultValue={fullName}
           className="border-input h-9 w-full rounded-md border px-3 py-1"
         />
       </div>
@@ -59,7 +73,7 @@ const AccountSetting: React.FC = () => {
         <label className="text-sm font-medium">Email</label>
         <input
           disabled
-          defaultValue="user@example.com"
+          defaultValue={email}
           className="border-input h-9 w-full rounded-md border px-3 py-1 bg-gray-100"
         />
       </div>

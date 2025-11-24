@@ -1,63 +1,46 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import useProfileData from "../hooks/useProfileData";
 
-// ----------------------------
-// 1. Define User Type
-// ----------------------------
-
-export interface AuthUser {
+// Replace this with your real UserData type
+type User = {
   id: string;
-  username: string;
-  email?: string;
-  token?: string;
-  // add any other fields returned from backend
-}
+  fullName: string;
+  email: string;
+  gender: string;
+  profilePic: string;
+} | null;
 
-// ----------------------------
-// 2. Define Context Shape
-// ----------------------------
-
+// Shape of context
 interface AuthContextType {
-  authUser: AuthUser | null;
-  setAuthUser: React.Dispatch<React.SetStateAction<AuthUser | null>>;
+  authUser: User;
+  setAuthUser: React.Dispatch<React.SetStateAction<User>>;
 }
 
-// ----------------------------
-// 3. Create Context with Type
-// ----------------------------
+// Create context
+export const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined
-);
-
-// ----------------------------
-// 4. Custom Hook
-// ----------------------------
-
-export const useAuthContext = (): AuthContextType => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuthContext must be used inside AuthContextProvider");
-  }
-  return context;
+// Hook to use AuthContext
+export const useAuthContext = () => {
+ return useContext(AuthContext);
 };
 
-// ----------------------------
-// 5. Provider Props Type
-// ----------------------------
-
-interface AuthProviderProps {
-  children: ReactNode;
+// Provider component
+interface ProviderProps {
+  children: React.ReactNode;
 }
 
-// ----------------------------
-// 6. Provider Component
-// ----------------------------
+export const AuthContextProvider: React.FC<ProviderProps> = ({ children }) => {
+  // Auth user state
+ const [authUser, setAuthUser] = useState<User>(() => {
+  const stored = localStorage.getItem("user");
+  return stored ? JSON.parse(stored) : null;
+});
 
-export const AuthContextProvider = ({ children }: AuthProviderProps) => {
-  const storedUser = localStorage.getItem("chat-user");
-  const initialUser: AuthUser | null = storedUser ? JSON.parse(storedUser) : null;
-
-  const [authUser, setAuthUser] = useState<AuthUser | null>(initialUser);
 
   return (
     <AuthContext.Provider value={{ authUser, setAuthUser }}>

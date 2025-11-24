@@ -1,4 +1,9 @@
+import { useNavigate } from "react-router-dom";
 import { ChatIcon, CollapseIcon, ExpandIcon, LogoutIcon, SettingIcon } from "../icons/menuBarIcons";
+import { useDispatch } from "react-redux";
+import { logout } from "../../../store/Profile/userSlice";
+import { useAuthContext } from "../../../context/AuthContext";
+import { useState } from "react";
 type CollapseButtonProps = {
   collapsed: boolean;
   setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
@@ -45,10 +50,18 @@ export const SettingButton: React.FC<ButtonProps> = ({ collapsed, active, onClic
     </button>
   );
 };
-
 export const LogoutButton = ({ collapsed }:CollapseProps) => {
+  // const [showModal, setShowModal] = useState(false);
+  const dispatch = useDispatch();
+  const { setAuthUser } = useAuthContext();
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    dispatch(logout());
+    setAuthUser(null)
+  };
   return (
-    <button className="flex items-center gap-3 h-10 px-4 w-full hover:bg-red-50 text-red-600 rounded-md transition-all">
+    <button className="flex items-center gap-3 h-10 px-4 w-full hover:bg-red-50 text-red-600 rounded-md transition-all"
+    onClick={handleLogout}>
       <LogoutIcon />
       {!collapsed && <span>Logout</span>}
     </button>

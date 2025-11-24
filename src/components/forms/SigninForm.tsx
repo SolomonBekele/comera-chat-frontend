@@ -1,29 +1,48 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { EMAIL as mockEmail, PASSWORD as mockPassword } from '../../utils/constants'
-import { useNavigate } from 'react-router-dom'
+import {  useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
+import { useDispatch, useSelector } from "react-redux";
+// import { loginUser, logout, User } from "../../user/userSlice"; // adjust path
+// import type { RootState, AppDispatch } from "../redux/store";
+import { loginUser } from '../../store/Profile/userThunk';
+import type { AppDispatch,RootState } from '../../store';
+import { useAuthContext } from '../../context/AuthContext';
+
+
 
 const SigninForm: React.FC = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const dispatch: AppDispatch = useDispatch();
+  const navigate = useNavigate();
+ const { setAuthUser } = useAuthContext();
 
-  const navigate = useNavigate()
+  const { user, loading, error, isAuthenticated } = useSelector(
+    (state: RootState) => state.user
+  );
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
-    if (email === mockEmail && password === mockPassword) {
+  // Navigate and show toast on successful login
+  useEffect(() => {
+    if (isAuthenticated && user) {
       toast.success("Logged in successfully!");
-
-      // Save login
-      localStorage.setItem("login", "true");
-
-      // Navigate to dashboard
-      navigate("/dashboard");
-    } else {
-      toast.error("Email or Password is incorrect!");
+      
+      setAuthUser(user);
     }
-  }
+  }, [isAuthenticated, user, navigate]);
+
+  // Show error toast if login fails
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
+
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    dispatch(loginUser({ email, password }));
+  };
 
   return (
     <div className="form-container bg-white p-8 rounded-2xl w-[28rem] flex flex-col items-center">
@@ -49,7 +68,7 @@ const SigninForm: React.FC = () => {
         <h1 className="text-gray-700 text-lg">Sign in to continue</h1>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col w-full space-y-4">
+      <form onSubmit={handleLogin} className="flex flex-col w-full space-y-4">
         <label htmlFor="email" className="text-sm mb-2">Email</label>
         <input
           type="email"
@@ -75,7 +94,7 @@ const SigninForm: React.FC = () => {
           type="submit"
           className="bg-[oklch(.704_.14_182.503)] text-white font-semibold py-2 rounded-md hover:opacity-90 transition"
         >
-          Sign In
+         {loading ? "Logging in..." : "signIn"}
         </button>
       </form>
     </div>

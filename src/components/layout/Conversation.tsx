@@ -8,6 +8,7 @@ interface ConversationProps {
 }
 
 export const Conversation = ({
+  id,
   name,
   avatar,
   lastMessage,

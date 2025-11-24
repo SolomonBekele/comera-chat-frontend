@@ -1,13 +1,21 @@
-import { StrictMode } from "react";
+import React, { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { RouterProvider } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
-import router from "./router";
+import { BrowserRouter } from "react-router-dom";
+import App from "./App.tsx";
 import "./index.css";
+import { AuthContextProvider } from "./context/AuthContext.jsx";
+import { Provider } from "react-redux";
+import {store}from "./store/index.ts";
+// import { PersistGate } from "redux-persist/integration/react";
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <Toaster position="top-right" />
-    <RouterProvider router={router} />
-  </StrictMode>
+  <Provider store={store}>
+      <BrowserRouter>
+        <StrictMode>
+          <AuthContextProvider>
+            <App />
+          </AuthContextProvider>
+        </StrictMode>
+      </BrowserRouter>
+  </Provider>
 );
