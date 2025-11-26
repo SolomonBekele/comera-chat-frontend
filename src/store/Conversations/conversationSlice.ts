@@ -1,6 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { fetchConversations } from "./conversationThunk";
 
+
 export interface Conversation {
   id: number;
   name: string;

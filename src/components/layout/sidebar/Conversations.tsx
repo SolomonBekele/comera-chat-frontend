@@ -8,7 +8,10 @@ import { fetchConversations } from "../../../store/Conversations/conversationThu
 
 const Conversations: React.FC = () => {
  const dispatch = useDispatch<AppDispatch>();
-  const { conversations, status, error } = useSelector((state: RootState) => state.conversations);
+  const { conversations, status, error } = useSelector((state: RootState) => {
+    console.log(state.conversations);
+    return state.conversations});
+  console.log(conversations);
 
   useEffect(() => {
     dispatch(fetchConversations());
