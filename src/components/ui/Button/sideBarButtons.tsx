@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { logout } from "../../../store/Profile/userSlice";
 import { useAuthContext } from "../../../context/authContext";
 import { useState } from "react";
+import toast from "react-hot-toast";
 type CollapseButtonProps = {
   collapsed: boolean;
   setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
@@ -58,6 +59,7 @@ export const LogoutButton = ({ collapsed }:CollapseProps) => {
     localStorage.removeItem("user");
     dispatch(logout());
     setAuthUser(null)
+    toast.success("logged out successfully");
   };
   return (
     <button className="flex items-center gap-3 h-10 px-4 w-full hover:bg-red-50 text-red-600 rounded-md transition-all"

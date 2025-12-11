@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import type { Conversation } from "./conversationSlice";
-import { LOCAL_URL, USER_API } from "../../utils/constants";
+import { BASE_URL, USER_PROFILE_API, VERSION } from "../../utils/constants";
 
 
 // Fetch all conversations
@@ -8,7 +8,7 @@ export const fetchConversations = createAsyncThunk<Conversation[]>(
   "conversations/fetchAll",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${LOCAL_URL}${USER_API}`, {
+      const response = await fetch(`${BASE_URL}${VERSION}${USER_PROFILE_API}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSelector } from 'react-redux';
 import type { RootState } from "../../../store";
-import { LOCAL_URL, MESSAGE_API } from "../../../utils/constants";
+import { BASE_URL, MESSAGE_API } from "../../../utils/constants";
 
 interface MessageInputProps {
   onSend?: (message: string) => void;
@@ -96,7 +96,7 @@ export default MessageInput;
         try {
           const token = localStorage.getItem("user-token");
     
-        await fetch(`${LOCAL_URL}${MESSAGE_API}send/${id}`, {
+        await fetch(`${BASE_URL}${MESSAGE_API}send/${id}`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

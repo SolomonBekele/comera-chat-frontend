@@ -7,11 +7,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchConversations } from "../../../store/Conversations/conversationThunk";
 
 const Conversations: React.FC = () => {
- const dispatch = useDispatch<AppDispatch>();
-  const { conversations, status, error } = useSelector((state: RootState) => {
-    console.log(state.conversations);
-    return state.conversations});
-  console.log(conversations);
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { conversations, status, error, selectedConversation } = useSelector(
+    (state: RootState) => state.conversations
+  );
+
+  const activeId = selectedConversation?.id ?? null;
 
   useEffect(() => {
     dispatch(fetchConversations());
@@ -27,16 +29,22 @@ const Conversations: React.FC = () => {
 
       {/* Scroll Area */}
       <div className="relative flex-1">
-        <div className="focus-visible:ring-ring/50 size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-1">
-          <div className="p-2">
-            {status === "loading"
-              ? Array.from({ length: 5 }).map((_, i) => <UserButtonShimmer key={i} />)
-              : status === "failed"
-              ? <p className="text-red-500">{error}</p>
-              : conversations.map((conversation) => {
-                  return <Conversation key={conversation.id} {...conversation} />
-})}
-          </div>
+        <div className="p-2">
+          {status === "loading" ? (
+            Array.from({ length: 5 }).map((_, i) => (
+              <UserButtonShimmer key={i} />
+            ))
+          ) : status === "failed" ? (
+            <p className="text-red-500">{error}</p>
+          ) : (
+            conversations.map((conversation) => (
+              <Conversation
+                key={conversation.id}
+                {...conversation}
+                isActive={activeId === conversation.id}
+              />
+            ))
+          )}
         </div>
       </div>
     </>

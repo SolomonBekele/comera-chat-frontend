@@ -2,13 +2,13 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 
 
 import type { Message } from "./messageSlice";
-import { LOCAL_URL, MESSAGE_API } from "../../utils/constants";
+import { BASE_URL, MESSAGE_API } from "../../utils/constants";
 
 export const fetchMessages = createAsyncThunk(
   "messages/fetchMessages",
 async (userId: number, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${LOCAL_URL}${MESSAGE_API}${userId}`, {
+      const response = await fetch(`${BASE_URL}${MESSAGE_API}${userId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

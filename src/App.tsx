@@ -4,12 +4,13 @@ import { Toaster } from "react-hot-toast";
 import { useAuthContext } from "./context/authContext";
 import DashboardPage from "./pages/DashboardPage";
 import SigninPage from "./pages/SigninPage";
+import SignupPage from "./pages/signupPage";
 
 // import SignUp from "./pages/signup/SignUp"; // optional
 
 const App: React.FC = () => {
   const { authUser } = useAuthContext();
-
+  console.log(authUser);
   return (
     <div>
       <Routes>
@@ -25,12 +26,12 @@ const App: React.FC = () => {
           path="/signin"
           element={authUser ? <Navigate to="/dashboard" replace /> : <SigninPage />}
         />
-        {/* 
+        
         <Route
           path="/signup"
-          element={authUser ? <Navigate to="/dashboard" replace /> : <SignUp />}
+          element={authUser ? <Navigate to="/dashboard" replace /> : <SignupPage />}
         /> 
-        */}
+       
       </Routes>
       <Toaster position="top-right" />
     </div>

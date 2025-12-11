@@ -5,7 +5,7 @@ import { fetchConversations } from "./conversationThunk";
 export interface Conversation {
   id: number;
   name: string;
-  avatar: string;
+  profile_picture: string;
   lastMessage: string;
   timeAgo: string;
   unreadCount: number;
@@ -39,7 +39,7 @@ const conversationsSlice = createSlice({
       })
       .addCase(fetchConversations.fulfilled, (state, action: PayloadAction<Conversation[]>) => {
         state.status = "idle";
-        state.conversations = action.payload;
+        state.conversations = action.payload.users;
       })
       .addCase(fetchConversations.rejected, (state, action) => {
         state.status = "failed";

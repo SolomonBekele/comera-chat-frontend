@@ -1,10 +1,13 @@
+
+
 export const EMAIL: string = 'solubman28@gmail.com';
 export const PASSWORD: string = 'password';
 
-export const LOCAL_URL = "http://localhost:8000";
-export const USER_API = "/api/users/";
-export const AUTH_API = "/api/auth/";
-export const MESSAGE_API ="/api/messages/"
+export const BASE_URL = "http://localhost:3000";
+export const VERSION = "/v1"
+export const USER_PROFILE_API = "/user/profile";
+export const USER_AUTH_API = "/user/auth";
+export const MESSAGE_API ="/messages"
 
 export const UsersData = [
   {

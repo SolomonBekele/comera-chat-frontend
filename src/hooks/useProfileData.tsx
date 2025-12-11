@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
-import { LOCAL_URL, USER_API } from "../utils/constants";
-
+import { useState } from "react";
+import { BASE_URL, USER_PROFILE_API, VERSION } from "../utils/constants";
 
 interface UserData {
   id: string;
@@ -16,34 +15,36 @@ interface ApiResponse {
 
 const useProfileData = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const fetchUserData = async () => {
+  const fetchUserData = async (): Promise<UserData | null> => {
+    const token = localStorage.getItem("user-token");
+    if (!token) return null; // no token, return null
+
     try {
-      const token = localStorage.getItem("user-token");
-
-      const response = await fetch(`${LOCAL_URL}${USER_API}user/token`, {
+      const response = await fetch(`${BASE_URL}${VERSION}${USER_PROFILE_API}/self/token`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
+          Authorization: `Bearer ${token}`,
         },
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const json: ApiResponse = await response.json();
       setUserData(json.data);
-    } catch (error) {
-      console.error("Error fetching user data:", error);
+      return json.data; // return the data
+    } catch (err: any) {
+      setError(err.message || "Unknown error");
+      console.error("Error fetching user data:", err);
+      return null;
     }
   };
 
- useEffect(() => {
-  const load = async () => {
-    await fetchUserData();
-  };
-
-  load();
-}, []);
-  return userData;
+  return { userData, error, fetchUserData };
 };
 
 export default useProfileData;

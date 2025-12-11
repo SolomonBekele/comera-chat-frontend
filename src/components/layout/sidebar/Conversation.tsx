@@ -6,39 +6,50 @@ import { setSelectedConversation } from "../../../store/Conversations/conversati
 interface ConversationProps {
   id: number;
   name: string;
-  avatar: string;
+  profile_picture: string;
   lastMessage: string;
   timeAgo: string;
   unreadCount: number;
+  isActive: boolean; // <-- NEW
 }
 
 export const Conversation = ({
   id,
   name,
-  avatar,
+  profile_picture,
   lastMessage,
   timeAgo,
   unreadCount,
+  isActive,
 }: ConversationProps) => {
- const dispatch = useDispatch<AppDispatch>();
- const handleAddMessages = (userId: number) => {
-  const conversation = {id,name,avatar,lastMessage,timeAgo,unreadCount}
-  dispatch(fetchMessages(userId));
-  dispatch(setSelectedConversation(conversation));
-};
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleAddMessages = (userId: number) => {
+    const conversation = {
+      id,
+      name,
+      profile_picture,
+      lastMessage,
+      timeAgo,
+      unreadCount,
+    };
+
+    dispatch(fetchMessages(userId));
+    dispatch(setSelectedConversation(conversation));
+  };
+
   return (
-    <button className="w-full p-3 rounded-lg text-left hover:bg-gray-50 transition-colors flex items-start gap-3"
-    onClick={() => handleAddMessages(id)}>
+    <button
+      onClick={() => handleAddMessages(id)}
+      className={`w-full p-3 rounded-lg text-left flex items-start gap-3 transition-colors 
+        ${isActive ? "bg-teal-50" : "hover:bg-gray-50"}`}
+    >
       {/* Avatar */}
-      <span
-        data-slot="avatar"
-        className="relative flex size-10 shrink-0 overflow-hidden rounded-full"
-      >
+      <span className="relative flex size-10 shrink-0 overflow-hidden rounded-full">
         <img
-          data-slot="avatar-image"
           className="aspect-square size-full"
           alt={name}
-          src={avatar}
+          src={profile_picture}
         />
       </span>
 
@@ -54,7 +65,7 @@ export const Conversation = ({
           <p className="text-sm text-gray-600 truncate">{lastMessage}</p>
 
           {unreadCount > 0 && (
-            <span className="inline-flex items-center justify-center rounded-md py-0.5 font-medium w-fit whitespace-nowrap shrink-0 ml-2 bg-teal-500 hover:bg-teal-600 text-xs px-2 text-white">
+            <span className="inline-flex items-center justify-center rounded-md py-0.5 font-medium ml-2 bg-teal-500 text-xs px-2 text-white">
               {unreadCount}
             </span>
           )}

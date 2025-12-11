@@ -1,24 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { CameraIcon } from "../../ui/icons/sideBarIcons";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../store";
-
+import UpdateProfileForm from "../../forms/UpdateProfileForm";
 
 const AccountSetting: React.FC = () => {
-
-  const { user} = useSelector(
-    (state: RootState) => state.user
+  const { userData } = useSelector((state: RootState) => state.user);
+  const [profilePic, setProfilePic] = useState<string>(
+    userData?.profilePic ?? ""
+    
   );
-  const localUser = JSON.parse(localStorage.getItem("user") || "{}");
 
-  const profilePic = user?.profilePic || localUser?.profilePic;
-  const fullName = user?.fullName || localUser?.fullName;
-  const email =  user?.email || localUser?.email;
-  
   return (
     <div className="mt-6 space-y-6 animate-fade">
       <h3 className="mb-4">Profile Information</h3>
-
       {/* --- PROFILE PICTURE SECTION (UPDATED) --- */}
       <div className="flex flex-col sm:flex-row items-center gap-4">
         <div className="relative">
@@ -49,38 +44,7 @@ const AccountSetting: React.FC = () => {
           </p>
         </div>
       </div>
-
-      {/* --- NAME --- */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium">Display Name</label>
-        <input
-          defaultValue={fullName}
-          className="border-input h-9 w-full rounded-md border px-3 py-1"
-        />
-      </div>
-
-      {/* --- STATUS --- */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium">Status</label>
-        <input
-          defaultValue="Available"
-          className="border-input h-9 w-full rounded-md border px-3 py-1"
-        />
-      </div>
-
-      {/* --- EMAIL --- */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium">Email</label>
-        <input
-          disabled
-          defaultValue={email}
-          className="border-input h-9 w-full rounded-md border px-3 py-1 bg-gray-100"
-        />
-      </div>
-
-      <button className="h-9 px-4 py-2 w-full rounded-md bg-teal-500 hover:bg-teal-600 text-white font-medium">
-        Save Changes
-      </button>
+      <UpdateProfileForm/>
     </div>
   );
 };

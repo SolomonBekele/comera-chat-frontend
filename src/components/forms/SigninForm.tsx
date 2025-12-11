@@ -1,74 +1,66 @@
-import React, { useEffect, useState } from 'react'
-import {  useNavigate } from 'react-router-dom'
-import toast from 'react-hot-toast'
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-// import { loginUser, logout, User } from "../../user/userSlice"; // adjust path
-// import type { RootState, AppDispatch } from "../redux/store";
-import { loginUser } from '../../store/Profile/userThunk';
-import type { AppDispatch,RootState } from '../../store';
-import { useAuthContext } from '../../context/authContext';
-
-
+import { loginUser } from "../../store/Profile/userThunk";
+import type { AppDispatch, RootState } from "../../store";
+import { useAuthContext } from "../../context/authContext";
+import { ChatIcon2 } from "../ui/icons/chatAppIcon";
+import { SignInButton } from "../ui/Button/signinButton";
 
 const SigninForm: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
- const { setAuthUser } = useAuthContext();
+  const { setAuthUser } = useAuthContext();
 
-  const { user, loading, error, isAuthenticated } = useSelector(
-    (state: RootState) => state.user
-  );
+  // 🔥 using separated slice structure
+  const { userData, login } = useSelector((state: RootState) => state.user);
 
-  const [email, setEmail] = useState<string>("solubman28@gmail.com");
-  const [password, setPassword] = useState<string>("password");
+  const [email, setEmail] = useState<string>("example@gmail.com");
+  const [password, setPassword] = useState<string>("Password123!");
 
-  // Navigate and show toast on successful login
+  /** ---------------------------------------------------------
+   *          SUCCESSFUL LOGIN
+   * ---------------------------------------------------------*/
   useEffect(() => {
-    if (isAuthenticated && user) {
-      toast.success("Logged in successfully!");
-      
-      setAuthUser(user);
+    console.log("login");
+    if (login.isAuthenticated && userData && localStorage.getItem("user-token")) {
+      toast.success(login.message || "Logged in!");
+      setAuthUser(userData);
+      navigate("/"); // OPTIONAL: move inside if you want redirect
     }
-  }, [isAuthenticated, user, navigate]);
+  }, [login.isAuthenticated, userData]);
 
-  // Show error toast if login fails
+  /** ---------------------------------------------------------
+   *          LOGIN ERROR
+   * ---------------------------------------------------------*/
   useEffect(() => {
-    if (error) {
-      toast.error(error);
+    if (login.error) {
+      toast.error(login.error);
     }
-  }, [error]);
+  }, [login.error]);
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch(loginUser({ email, password }));
   };
 
+  const handleRegisterClick = () => {
+    navigate("/signup");
+  };
+
   return (
     <div className="form-container bg-white p-8 rounded-2xl w-[28rem] flex flex-col items-center">
       <div className="title-container mb-8 text-center">
         <div className="message-icon h-14 w-14 bg-teal-500 flex justify-center items-center rounded-full m-auto mb-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="lucide lucide-message-circle w-8 h-8 text-white"
-            aria-hidden="true"
-          >
-            <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"></path>
-          </svg>
+          <ChatIcon2 />
         </div>
         <p className="text-[oklch(.511_.096_186.391)] text-xl font-semibold">ChatApp Web</p>
         <h1 className="text-gray-700 text-lg">Sign in to continue</h1>
       </div>
 
-      <form onSubmit={handleLogin} className="flex flex-col w-full space-y-4">
-        <label htmlFor="email" className="text-sm mb-2">Email</label>
+      <form onSubmit={handleLogin} className="flex flex-col w-full space-y-4 text-sm">
+        <label htmlFor="email" className="mb-2">Email</label>
         <input
           type="email"
           id="email"
@@ -79,7 +71,7 @@ const SigninForm: React.FC = () => {
           className="border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-3 focus:ring-[oklch(.511_.096_186.391)]"
         />
 
-        <label htmlFor="password" className="text-sm mb-2">Password</label>
+        <label htmlFor="password" className="mb-2">Password</label>
         <input
           id="password"
           type="password"
@@ -89,15 +81,26 @@ const SigninForm: React.FC = () => {
           className="border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-3 focus:ring-[oklch(.511_.096_186.391)]"
         />
 
-        <button
-          type="submit"
-          className="bg-[oklch(.704_.14_182.503)] text-white font-semibold py-2 rounded-md hover:opacity-90 transition"
-        >
-         {loading ? "Logging in..." : "signIn"}
-        </button>
+        <SignInButton />
+
+        <div className="m-auto mb-3">
+          <h1 className="text-teal-400">Forgot password?</h1>
+        </div>
+
+        <div className="m-auto">
+          <p>
+            Not registered yet?
+            <span
+              className="text-teal-800 cursor-pointer ms-1"
+              onClick={handleRegisterClick}
+            >
+              Register
+            </span>
+          </p>
+        </div>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default SigninForm
+export default SigninForm;

@@ -5,7 +5,7 @@ import SideBar from "../components/layout/sidebar/SideBar";
 
 
 const DashboardPage: React.FC = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [activeTab, setActiveTab] = useState<"chat" | "settings">("chat");
   return (
     <div className="h-screen flex overflow-hidden">
