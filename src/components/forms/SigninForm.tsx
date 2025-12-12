@@ -23,7 +23,6 @@ const SigninForm: React.FC = () => {
    *          SUCCESSFUL LOGIN
    * ---------------------------------------------------------*/
   useEffect(() => {
-    console.log("login");
     if (login.isAuthenticated && userData && localStorage.getItem("user-token")) {
       toast.success(login.message || "Logged in!");
       setAuthUser(userData);

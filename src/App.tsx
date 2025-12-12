@@ -10,7 +10,6 @@ import SignupPage from "./pages/signupPage";
 
 const App: React.FC = () => {
   const { authUser } = useAuthContext();
-  console.log(authUser);
   return (
     <div>
       <Routes>

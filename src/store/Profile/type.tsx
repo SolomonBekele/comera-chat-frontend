@@ -3,7 +3,7 @@ export interface UserData {
   name: string;
   email: string;
   phone_number: string;
-  profilePic: string;
+  profile_picture: string;
   status:string;
 }
 
@@ -38,4 +38,13 @@ export interface userUpdatePayload {
   fullName :string;
   phoneNumber : string;
   status : string
+}
+export interface profilePicUpdatePayload {
+  file: File;      // The image file selected by the user
+}
+
+export interface profilePicUpdateResponse {
+  fileName :string;
+  message :string
+  sucess : string;
 }

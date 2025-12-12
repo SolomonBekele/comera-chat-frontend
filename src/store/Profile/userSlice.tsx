@@ -1,41 +1,28 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { loginUser, updateUser } from "./userThunk";
+import { loginUser, updateUser, updateProfilePic } from "./userThunk";
 import type { UserData } from "./type";
+
+interface AsyncState {
+  loading: boolean;
+  error: string | null;
+  message: string | null;
+  isUpdated?: boolean;
+  isAuthenticated?: boolean;
+}
 
 interface UserState {
   userData: UserData | null;
-
-  login: {
-    loading: boolean;
-    error: string | null;
-    message: string | null;
-    isAuthenticated: boolean;
-  };
-
-  update: {
-    loading: boolean;
-    error: string | null;
-    message: string | null;
-    isUpdated: boolean;
-  };
+  login: AsyncState;
+  updateUser: AsyncState;
+  updateProfilePic: AsyncState;
 }
 
+const initialAsyncState: AsyncState = { loading: false, error: null, message: null };
 const initialState: UserState = {
   userData: null,
-
-  login: {
-    loading: false,
-    error: null,
-    message: null,
-    isAuthenticated: false,
-  },
-
-  update: {
-    loading: false,
-    error: null,
-    message: null,
-    isUpdated: false,
-  },
+  login: { ...initialAsyncState, isAuthenticated: false },
+  updateUser: { ...initialAsyncState, isUpdated: false },
+  updateProfilePic: { ...initialAsyncState, isUpdated: false },
 };
 
 const userSlice = createSlice({
@@ -44,42 +31,29 @@ const userSlice = createSlice({
   reducers: {
     logout(state) {
       state.userData = null;
-
-      // reset login state
-      state.login = {
-        loading: false,
-        error: null,
-        message: null,
-        isAuthenticated: false,
-      };
+      state.login = { ...initialAsyncState, isAuthenticated: false };
       localStorage.removeItem("user-token");
       localStorage.removeItem("user-refresh-token");
     },
     resetUpdate(state) {
-    state.update = { loading: false, isUpdated: false, message: null, error: null };
-  }
+      state.updateUser = { ...initialAsyncState, isUpdated: false };
+      state.updateProfilePic = { ...initialAsyncState, isUpdated: false };
+    },
   },
-
   extraReducers: (builder) => {
-    /** -----------------------------------------
-     *                LOGIN
-     * -----------------------------------------*/
+    /** ------------------- LOGIN ------------------- */
     builder
       .addCase(loginUser.pending, (state) => {
         state.login.loading = true;
         state.login.error = null;
-        state.login.message = "logging...";
+        state.login.message = "Logging in...";
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.login.loading = false;
         state.login.isAuthenticated = true;
         state.login.message = action.payload.message;
-
-        // save token
         localStorage.setItem("user-token", action.payload.token);
         localStorage.setItem("user-refresh-token", action.payload.refreshToken);
-
-        // same userData
         state.userData = action.payload.user;
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -88,31 +62,46 @@ const userSlice = createSlice({
         state.login.message = null;
       });
 
-    /** -----------------------------------------
-     *                UPDATE
-     * -----------------------------------------*/
+    /** ------------------- UPDATE USER ------------------- */
     builder
       .addCase(updateUser.pending, (state) => {
-        state.update.loading = true;
-        state.update.error = null;
-        state.update.message = "updating...";
-        state.update.isUpdated = false;
+        state.updateUser.loading = true;
+        state.updateUser.error = null;
+        state.updateUser.message = "Updating...";
+        state.updateUser.isUpdated = false;
       })
       .addCase(updateUser.fulfilled, (state, action) => {
-        state.update.loading = false;
-        state.update.isUpdated = true;
-        state.update.message = action.payload.message;
-
-        // SAME userData is updated
+        state.updateUser.loading = false;
+        state.updateUser.isUpdated = true;
+        state.updateUser.message = action.payload.message;
         state.userData = action.payload.user;
       })
       .addCase(updateUser.rejected, (state, action) => {
-        state.update.loading = false;
-        state.update.error = (action.payload as any)?.message || "Update failed";
-        state.update.message = null;
+        state.updateUser.loading = false;
+        state.updateUser.error = (action.payload as any)?.message || "Update failed";
+        state.updateUser.message = null;
+      });
+
+    /** ------------------- UPDATE PROFILE PICTURE ------------------- */
+    builder
+      .addCase(updateProfilePic.pending, (state) => {
+        state.updateProfilePic.loading = true;
+        state.updateProfilePic.error = null;
+        state.updateProfilePic.isUpdated = false;
+      })
+      .addCase(updateProfilePic.fulfilled, (state, action) => {
+        state.updateProfilePic.loading = false;
+        state.updateProfilePic.isUpdated = true;
+        if (state.userData) {
+          state.userData.profile_picture = action.payload.fileName;
+        }
+      })
+      .addCase(updateProfilePic.rejected, (state, action) => {
+        state.updateProfilePic.loading = false;
+        state.updateProfilePic.error = (action.payload as any)?.message || "Update failed";
       });
   },
 });
 
-export const { logout,resetUpdate } = userSlice.actions;
+export const { logout, resetUpdate } = userSlice.actions;
 export default userSlice.reducer;
